@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Pencatatan HM & BBM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            min-height: 100vh;
+            padding: 25px 15px;
+        }
+
+        .container {
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px 24px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.18);
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            gap: 8px;
+        }
+
+        .form-group label span {
+            font-size: 1.1rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+        }
+
+        input[readonly] {
+            background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%);
+            color: #1e40af;
+            font-weight: 600;
+            border-color: #93c5fd;
+            cursor: not-allowed;
+        }
+
+        .info-text {
+            font-size: 0.8rem;
+            margin-top: 6px;
+            padding: 6px 10px;
+            border-radius: 8px;
+        }
+
+        .info-sukses {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .info-kosong {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .hasil-card {
+            background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+            border-radius: 18px;
+            padding: 22px;
+            text-align: center;
+            color: white;
+            margin: 24px 0;
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .hasil-card .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 6px;
+        }
+
+        .hasil-card .nilai {
+            font-size: 2.4rem;
+            font-weight: 700;
+        }
+
+        .btn-simpan {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
+        }
+
+        .btn-simpan:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-simpan:active {
+            transform: translateY(0);
+        }
+
+        .btn-simpan:disabled {
+            background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status-box {
+            margin-top: 18px;
+            padding: 14px;
+            border-radius: 12px;
+            display: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sukses {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+            border: 1px solid #86efac;
+            display: block !important;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+            display: block !important;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            color: #1e40af;
+            border: 1px solid #93c5fd;
+            display: block !important;
+        }
+
+        .tips-card {
+            background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+            border-radius: 16px;
+            padding: 18px;
+            border-left: 4px solid #f59e0b;
+            font-size: 0.85rem;
+            color: #78350f;
+            line-height: 1.7;
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+            margin: 24px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🚜 Pencatatan HM & BBM</h1>
+            <p>📋 Data Langsung Tersimpan di Google Sheets</p>
+        </div>
+
+        <!-- Form Utama -->
+        <div class="card">
+            <!-- Tanggal -->
+            <div class="form-group">
+                <label><span>📅</span> Tanggal</label>
+                <input type="date" id="tanggal">
+            </div>
+
+            <!-- Lokasi -->
+            <div class="form-group">
+                <label><span>📍</span> Lokasi Kerja</label>
+                <input type="text" id="lokasi" placeholder="Contoh: Kebun Sawit Blok C">
+            </div>
+
+            <!-- Unit -->
+            <div class="form-group">
+                <label><span>🚜</span> Pilih Unit Alat</label>
+                <select id="unit" onchange="muatHmAwal()">
+                    <option value="">-- Pilih Unit Alat --</option>
+                    <option value="Mau 26">🔵 Mau 26</option>
+                    <option value="Excavator 02">🟢 Excavator 02</option>
+                    <option value="Excavator 03">🟠 Excavator 03</option>
+                    <option value="Dozer 01">🔷 Dozer 01</option>
+                    <option value="Dozer 02">🔶 Dozer 02</option>
+                    <option value="Truk 01">🚛 Truk 01</option>
+                    <option value="Truk 02">🚚 Truk 02</option>
+                    <option value="Grader 01">🚜 Grader 01</option>
+                </select>
+            </div>
+
+            <!-- HM Awal -->
+            <div class="form-group">
+                <label><span>⏱️</span> HM Awal</label>
+                <input type="number" id="hmAwal" readonly placeholder="Otomatis terisi...">
+                <div id="infoHmAwal" class="info-text"></div>
+            </div>
+
+            <!-- HM Akhir -->
+            <div class="form-group">
+                <label><span>🔢</span> HM Akhir</label>
+                <input type="number" id="hmAkhir" placeholder="Masukkan jam akhir hari ini" oninput="hitungOtomatis()">
+            </div>
+
+            <!-- Hasil HM Kerja -->
+            <div class="hasil-card">
+                <div class="label">✨ HM Kerja Hari Ini</div>
+                <div class="nilai"><span id="hmKerja">0</span> Jam</div>
+            </div>
+
+            <!-- BBM -->
+            <div class="form-group">
+                <label><span>⛽</span> Pemakaian BBM (Liter)</label>
+                <input type="number" id="bbm" step="0.01" placeholder="Contoh: 52.75">
+            </div>
+
+            <div class="divider"></div>
+
+            <!-- Tombol Simpan -->
+            <button onclick="simpanData()" id="btnSimpan" class="btn-simpan">💾 SIMPAN DATA</button>
+
+            <!-- Status Pesan -->
+            <div id="status" class="status-box"></div>
+        </div>
+
+        <!-- Tips -->
+        <div class="tips-card">
+            <strong>💡 Panduan Cepat:</strong><br>
+            1️⃣ Pilih Unit → HM Awal otomatis muncul<br>
+            2️⃣ Isi HM Akhir → HM Kerja terhitung otomatis<br>
+            3️⃣ Masukkan pemakaian BBM<br>
+            4️⃣ Klik tombol <strong>Simpan Data</strong> ✅
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // ⚠️ GANTI URL INI DENGAN URL WEB APP KAMU!
+        const URL_GOOGLE_SHEETS = "https://script.google.com/macros/s/AKfycbx6RdiixfxbxTUjESNEuaTtTev39_V25bocxOP54Lj_Cm3SVoxRwHnueVNvX0tFDI3d7Q/exec";
+        // ============================================
+
+        // Muat HM Awal otomatis
+        function muatHmAwal() {
+            const unit = document.getElementById('unit').value;
+            const elemenHmAwal = document.getElementById('hmAwal');
+            const elemenInfo = document.getElementById('infoHmAwal');
+            
+            if (!unit) {
+                elemenHmAwal.value = '';
+                elemenInfo.textContent = '';
+                elemenInfo.className = 'info-text';
+                hitungOtomatis();
+                return;
+            }
+
+            const kunci = `hm_terakhir_${unit}`;
+            const hmTerakhir = localStorage.getItem(kunci);
+            
+            if (hmTerakhir) {
+                elemenHmAwal.value = hmTerakhir;
+                elemenInfo.textContent = `✅ Diambil dari data terakhir: ${hmTerakhir} jam`;
+                elemenInfo.className = 'info-text info-sukses';
+                elemenHmAwal.setAttribute('readonly', true);
+            } else {
+                elemenHmAwal.value = '';
+                elemenInfo.textContent = '⚠️ Belum ada data, isi manual pertama kali';
+                elemenInfo.className = 'info-text info-kosong';
+                elemenHmAwal.removeAttribute('readonly');
+                elemenHmAwal.placeholder = 'Isi manual di sini';
+            }
+            
+            hitungOtomatis();
+        }
+
+        // Hitung otomatis
+        function hitungOtomatis() {
+            const hmAwal = parseFloat(document.getElementById('hmAwal').value) || 0;
+            const hmAkhir = parseFloat(document.getElementById('hmAkhir').value) || 0;
+            const hasil = hmAkhir - hmAwal;
+            
+            document.getElementById('hmKerja').textContent = hasil >= 0 ? hasil.toFixed(1) : '0';
+        }
+
+        // Simpan data
+        async function simpanData() {
+            const tanggal = document.getElementById('tanggal').value;
+            const lokasi = document.getElementById('lokasi').value.trim();
+            const unit = document.getElementById('unit').value;
+            const hmAwal = parseFloat(document.getElementById('hmAwal').value) || 0;
+            const hmAkhir = parseFloat(document.getElementById('hmAkhir').value) || 0;
+            const bbm = parseFloat(document.getElementById('bbm').value) || 0;
+            const hmKerja = hmAkhir - hmAwal;
+
+            const status = document.getElementById('status');
+            const tombol = document.getElementById('btnSimpan');
+
+            // Validasi
+            if (!tanggal) {
+                status.textContent = '❌ Harap pilih Tanggal dulu!';
+                status.className = 'status-box error';
+                return;
+            }
+            if (!lokasi) {
+                status.textContent = '📍 Harap isi Lokasi Kerja!';
+                status.className = 'status-box error';
+                return;
+            }
+            if (!unit) {
+                status.textContent = '🚜 Harap pilih Unit Alat!';
+                status.className = 'status-box error';
+                return;
+            }
+            if (!hmAkhir) {
+                status.textContent = '⏱️ Harap isi HM Akhir terlebih dahulu!';
+                status.className = 'status-box error';
+                return;
+            }
+            if (hmKerja < 0) {
+                status.textContent = '⚠️ HM Akhir tidak boleh lebih kecil dari HM Awal!';
+                status.className = 'status-box error';
+                return;
+            }
+
+            // Konfirmasi
+            const konfirmasi = confirm(
+                `📝 KONFIRMASI DATA:\n` +
+                `📅 Tanggal: ${tanggal}\n` +
+                `📍 Lokasi: ${lokasi}\n` +
+                `🚜 Unit: ${unit}\n` +
+                `⏱️ HM Awal: ${hmAwal}\n` +
+                `⏱️ HM Akhir: ${hmAkhir}\n` +
+                `✨ HM Kerja: ${hmKerja.toFixed(1)} jam\n` +
+                `⛽ BBM: ${bbm} Liter\n\n` +
+                `✅ Simpan ke Google Sheets?`
+            );
+            if (!konfirmasi) return;
+
+            tombol.disabled = true;
+            status.textContent = '⏳ Sedang mengirim data...';
+            status.className = 'status-box info';
+
+            try {
+                await fetch(URL_GOOGLE_SHEETS, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tanggal, lokasi, unit, hmAwal, hmAkhir, hmKerja, bbm })
+                });
+
+                // Simpan untuk besok
+                localStorage.setItem(`hm_terakhir_${unit}`, hmAkhir);
+
+                status.textContent = '✅ BERHASIL! Data masuk ke Google Sheets 🎉';
+                status.className = 'status-box sukses';
+
+                // Reset form
+                setTimeout(() => {
+                    document.getElementById('lokasi').value = '';
+                    document.getElementById('unit').value = '';
+                    document.getElementById('hmAwal').value = '';
+                    document.getElementById('hmAkhir').value = '';
+                    document.getElementById('hmKerja').textContent = '0';
+                    document.getElementById('bbm').value = '';
+                    document.getElementById('infoHmAwal').textContent = '';
+                    document.getElementById('infoHmAwal').className = 'info-text';
+                    document.getElementById('hmAwal').setAttribute('readonly', true);
+                    document.getElementById('hmAwal').placeholder = 'Otomatis terisi...';
+                    status.style.display = 'none';
+                    tombol.disabled = false;
+                }, 3000);
+
+            } catch (error) {
+                status.textContent = '❌ Gagal terhubung! Cek URL & koneksi internet';
+                status.className = 'status-box error';
+                tombol.disabled = false;
+            }
+        }
+
+        // Set tanggal hari ini
+        document.getElementById('tanggal').valueAsDate = new Date();
+    </script>
+
+</body>
+</html>
